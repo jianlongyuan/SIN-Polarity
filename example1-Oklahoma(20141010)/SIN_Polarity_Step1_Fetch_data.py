@@ -57,7 +57,7 @@ domain = CircularDomain(latitude =lat,
                         maxradius=maxDisInDeg )
 
 restrictions = Restrictions(
-    # Get data from 30 minutes before the event to 60 minutes after the
+    # Get data from 0.5 minutes before the event to 3.0 minutes after the
     # event. This defines the temporal bounds of the waveform data.
     starttime=origin_time - 0.5*60, 
     endtime  =origin_time + 3.0*60,

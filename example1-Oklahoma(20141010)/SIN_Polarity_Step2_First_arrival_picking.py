@@ -24,7 +24,6 @@ from obspy import read_inventory
 
 
 #%%---- Transfer the waveforms to the corresponding folder
-'''
 src_dir = './2014-10-10-mb4.5-Oklahoma/'
 
 #-- folder path
@@ -52,7 +51,7 @@ for fname in os.listdir(src_dir):
         shutil.move(src_path, dst_pathZ)
         
 print("finished!")
-'''
+
 
 
 #%%---- Calculate the theoretical time and capture the time window
