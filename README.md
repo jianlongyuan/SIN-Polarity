@@ -56,7 +56,6 @@ NX,STN02,41.9
 
 - `templates.csv`: P-wave arrival times for each station
 - `StationinformationPhasenet.csv` / `StationinformationSTALTA.csv`: Polarity results (1='U', -1='D')
-- `output_FMsln.csv`: Focal mechanism solutions (if applicable)
 
 ## Contact
 
