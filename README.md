@@ -18,12 +18,27 @@ This project implements a workflow for:
 ## Workflow
 
 ```
-a_tool_FetchDataFromIRIS.py   # Step 1: Download data from IRIS
+SIN_Polarity_Step1_Fetch_data.py                # Step 1: Download data from IRIS
         ↓
-b_tool_phasenet.py            # Step 2a: Pick P-wave with PhaseNet
-  or b_tool_StaLta.py         # Step 2b: Pick P-wave with STA/LTA
+SIN-Polarity_Step2_First_arrival_picking.py     # Step 2: Pick P-wave first arrival by PhaseNet or STA/LTA
         ↓
-c_tool_SIN-Polarity.py        # Step 3: Determine polarity
+SIN-Polarity_Step3_Polarity_identification.py   # Step 3: Determine P-wave first-motion polarity
+```
+
+## Quick Start
+
+If you already have P-wave first arrival times from public datasets or other picking methods, you can directly use `SIN-Polarity_Step3_Polarity_identification.py` to determine P-wave first-motion polarity on the vertical component.
+
+Prepare your arrival time data in `templates.csv` format with the following columns:
+- `network`: Network code
+- `station`: Station name
+- `onsetP`: P-wave arrival time (seconds from trace start)
+
+Example:
+```
+network,station,onsetP
+GS,OK025,41.54
+NX,STN02,41.9
 ```
 
 ## Requirements
@@ -42,3 +57,10 @@ c_tool_SIN-Polarity.py        # Step 3: Determine polarity
 - `templates.csv`: P-wave arrival times for each station
 - `StationinformationPhasenet.csv` / `StationinformationSTALTA.csv`: Polarity results (1='U', -1='D')
 - `output_FMsln.csv`: Focal mechanism solutions (if applicable)
+
+## Contact
+
+Any questions or advices? Please contact:
+- yuan_jianlong@126.com
+- 1334631943@qq.com
+
