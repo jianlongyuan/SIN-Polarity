@@ -152,7 +152,7 @@ for i in range(len(nFilesE)):
 
 #%%---- PhaseNet        
 print('Now processing (PhaseNet picking):')
-os.system( f"python run.py --mode=pred --model_dir=model/190703-214543\
+os.system( f"python phasenet/run.py --mode=pred --model_dir=model/190703-214543\
                 --data_dir=dataENZ --data_list=dataENZ/mseedNameList.csv\
                 --output_dir=output --batch_size=1 --input_mseed\
                 --plot_figure --save_result --input_length=14000" )
