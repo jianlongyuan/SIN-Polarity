@@ -1,6 +1,6 @@
 # SIN-Polarity
 
-A tool for determining P-wave first motion polarity based on sine wave template.
+A Novel Algorithm for Automatic Identification of P-wave First-motion Polarity Based on a Sine-wave Template.
 
 ## Overview
 
@@ -20,9 +20,9 @@ This project implements a workflow for:
 ```
 SIN_Polarity_Step1_Fetch_data.py                # Step 1: Download data from IRIS
         ↓
-SIN-Polarity_Step2_First_arrival_picking.py     # Step 2: Pick P-wave first arrival by PhaseNet or STA/LTA
+SIN_Polarity_Step2_First_arrival_picking.py     # Step 2: Pick P-wave first arrival by PhaseNet or STA/LTA
         ↓
-SIN-Polarity_Step3_Polarity_identification.py   # Step 3: Determine P-wave first-motion polarity
+SIN_Polarity_Step3_Polarity_identification.py   # Step 3: Determine P-wave first-motion polarity
 ```
 
 ## Quick Start
