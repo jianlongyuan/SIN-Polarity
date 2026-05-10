@@ -23,9 +23,24 @@ from obspy import read_inventory
 
 
 
-#%%---- Transfer the waveforms to the corresponding folder
+#%%----Relevant parameters that users can change according to their actual situation
+ 
+# Directory for storing downloaded data files
 src_dir = './2014-10-10-mb4.5-Oklahoma/'
+# Event location information
+ev_lat, ev_lon, ev_depth_km = 35.9677, -96.7344, 15.9 
+# filter parameter
+fqmin = 0.5
+fqmax = 15
+# Time window range, used to capture waveform segments and input them into PhaseNet to pick first-arrival times
+winbefore = 30
+winafter = 60
+# Threshold parameter, used to obtain more reliable first arrival results 
+threshold = 0.5
 
+
+
+#%%---- Transfer the waveforms to the corresponding folder
 #-- folder path
 dst_dir1 = './data1'
 dst_dir2 = './data2'
@@ -65,9 +80,9 @@ with open( outFile, mode='w', newline='' ) as fp:
     writer.writerow( [ 'fname', 'E', 'N', 'Z' ] )
 
 #-- Read data files
-dataPathE = './data1/'
-dataPathN = './data2/'
-dataPathZ = './dataZ/'
+dataPathE = dst_dir1
+dataPathN = dst_dir2
+dataPathZ = dst_dirZ
 nFilesE = fnmatch.filter( sorted(os.listdir(dataPathE)), '*.mseed') 
 nFilesN = fnmatch.filter( sorted(os.listdir(dataPathN)), '*.mseed') 
 nFilesZ = fnmatch.filter( sorted(os.listdir(dataPathZ)), '*.mseed') 
@@ -83,7 +98,7 @@ for i in range(len(nFilesE)):
     # Remove linear trend, mean, and bandpass filtering
     ENZ.detrend( type='demean')
     ENZ.detrend( type='simple')
-    ENZ = ENZ.filter('bandpass', freqmin=0.5, freqmax=15, corners=4, zerophase=False)  
+    ENZ = ENZ.filter('bandpass', freqmin=fqmin, freqmax=fqmax, corners=4, zerophase=False)  
 
     delta = ENZ[0].stats.delta
     starttime = ENZ[0].stats.starttime
@@ -93,13 +108,10 @@ for i in range(len(nFilesE)):
     station = ENZ[0].stats.station
     channelE = ENZ[0].stats.channel
     channelN = ENZ[1].stats.channel
-    channelZ = ENZ[2].stats.channel
-    
-    # Event location information
-    ev_lat, ev_lon, ev_depth_km = 35.9677, -96.7344, 15.9  
+    channelZ = ENZ[2].stats.channel 
     
     # Instrument response file
-    inv = read_inventory('./2014-10-10-mb4.5-Oklahoma/'+network+'.'+station+'.xml')      
+    inv = read_inventory(src_dir+network+'.'+station+'.xml')      
     netName = inv.select(network=network)
     staName = netName.select(station=station)[0][0]
     
@@ -126,21 +138,21 @@ for i in range(len(nFilesE)):
         print("No P arrival found for this geometry/model.")
     
     # Capture the time window for subsequent PhaseNet use
-    ENZ = ENZ.trim(p_abs_time-30, p_abs_time+60)
+    ENZ = ENZ.trim(p_abs_time-winbefore, p_abs_time+winafter)
 
     # Write as sac file
     filenameE = str(network)+'.'+str(station)+'.'+str(channelE)+'.sac'
-    ENZ[0].write('./dataENZ/'+filenameE, format="SAC")
+    ENZ[0].write( resultcsv+'/'+filenameE, format="SAC" )
     
     filenameN = str(network)+'.'+str(station)+'.'+str(channelN)+'.sac'
-    ENZ[1].write('./dataENZ/'+filenameN, format="SAC")
+    ENZ[1].write( resultcsv+'/'+filenameN, format="SAC" )
     
     filenameZ = str(network)+'.'+str(station)+'.'+str(channelZ)+'.sac'
-    ENZ[2].write('./dataENZ/'+filenameZ, format="SAC")
+    ENZ[2].write( resultcsv+'/'+filenameZ, format="SAC" )
     
     # Write as mseed file
     filename = str(network)+'.'+str(station)+'.mseed'
-    ENZ.write('./dataENZ/'+filename, format="MSEED")
+    ENZ.write( resultcsv+'/'+filename, format="MSEED" )
 
     # Write component information to CSV file
     with open( outFile, mode='a', newline='' ) as fp:
@@ -191,7 +203,7 @@ for i in range(numPicks):
         refNe  = ifname.split(".")[0]
         refSt  = ifname.split(".")[1]
         print('refNe, refSt =', refNe, refSt)
-        mseedFileName = "./dataENZ/{0}.{1}.mseed".format( str(refNe), refSt)
+        mseedFileName = resultcsv+"/{0}.{1}.mseed".format( str(refNe), refSt )
         infileENZ = open(mseedFileName)
         ENZ = read(infileENZ.name, debug_headers=True)
         
@@ -229,7 +241,7 @@ for i in range(numPicks):
             onsetP = (iitp-1)*delta           
             print('onsetP  =', onsetP)
             
-            if iitp_prob < 0.5:
+            if iitp_prob < threshold:
                 onsetP = 'NA'               
                 print('P picking error!\n')
                 
@@ -258,7 +270,7 @@ for i in range(numPicks):
             # the waveform data of the current event is not selected. 
             #Alternatively, if the probability of picking up P-wave initial arrival 
             # is less than a certain threshold, the station is not selected.
-            if iitp >= iits or iitp_prob < 0.5:
+            if iitp >= iits or iitp_prob < threshold:
                 onsetP = 'NA'               
                 print('P picking error!\n')
                 

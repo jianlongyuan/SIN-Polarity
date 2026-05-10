@@ -30,6 +30,17 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 plt.rcParams["font.family"] = "Times New Roman"
     
 
+
+#%%----Relevant parameters that users can change according to their actual situation
+ 
+# Cut the time window range of noise and signal segments
+windowlength = 1
+# The signal-to-noise ratio(SNR) threshold parameter is used to screen data that meets 
+# the SNR threshold and further determine polarity
+SNRthreshold = 3
+
+
+
 #%%---- Determine polarity
 def pol(st, P_pick):
     
@@ -57,10 +68,10 @@ def pol(st, P_pick):
     ENZonsetP = P_pick
             
     # Calculate SNR
-    Znosiebeg  = ENZonsetP-1
+    Znosiebeg  = ENZonsetP-windowlength
     Znosieend  = ENZonsetP
     Zsignalbeg = ENZonsetP
-    Zsignalend = ENZonsetP+1
+    Zsignalend = ENZonsetP+windowlength
 
     Znoisewave  = stZno.trim( starttime+Znosiebeg, starttime+Znosieend )
     Zsignalwave = stZsi.trim( starttime+Zsignalbeg, starttime+Zsignalend )
@@ -104,7 +115,7 @@ def pol(st, P_pick):
     '''
     
     # Pick up the polarity of station data that meets the SNR ratio threshold
-    if snrZ >= 3.0 :
+    if snrZ >= SNRthreshold :
         # Use a sine wave with one period as a template, and its polarity is positive
         tempolZ = 1
         

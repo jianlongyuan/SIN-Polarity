@@ -20,6 +20,25 @@ plt.rcParams["font.family"] = "Times New Roman"
     
 
 
+#%%----Relevant parameters that users can change according to their actual situation
+
+# Parameter used to set the vertical spacing of the waveform
+d = 0  # initial value
+dd = 3 # interval parameter
+
+# Used to set which station data to draw. Oklahoma has 39 stations, 
+# so node 19 is selected to divide the station data sorted by station name into two parts
+num = 19
+
+# Cut the time window range of noise and signal segments
+windowlength = 1
+
+# Display waveform segments based on P-wave arrival time setting time window range
+num1 = 0.3 # before
+num2 = 0.5 # after
+
+
+
 #%%-- Read CSV file of first arrival time information  
 filePath = './templates.csv' 
 data = pd.read_csv(filePath)
@@ -38,17 +57,19 @@ dataPath = './dataENZ/'
 nFiles = fnmatch.filter( sorted(os.listdir(dataPath)), '*.mseed') 
 nFiles = sorted(nFiles, key=lambda x: x.split('.')[1], reverse=True)
 
-d = 0 #-- Parameter used to set the vertical spacing of the waveform
-
 fig = plt.figure( constrained_layout=True, figsize=(7,22))
 fig.subplots_adjust(hspace=0.1)
 fig.subplots_adjust(wspace=0.0)
 gs0 = fig.add_gridspec(1, 1)  
 ax0 = fig.add_subplot(gs0[0, 0])
+# Draw waveforms in order of station names
 for idx,iFile in enumerate( nFiles ): 
   
-  # Draw the waveform in parts
-  if idx >= 19:
+  # Draw the waveform diagram of the first half
+  if idx >= num:
+      
+  # Or draw the waveform diagram of the latter half
+  # if idx < num:
     
     ENZ = obspy.read(dataPath + iFile)  
     
@@ -84,17 +105,17 @@ for idx,iFile in enumerate( nFiles ):
                 polZ = 'U'
     
     # noise segment and signal segment
-    Znosiebeg  = ENZonsetP-1.0
+    Znosiebeg  = ENZonsetP-windowlength
     Znosieend  = ENZonsetP
     Zsignalbeg = ENZonsetP
-    Zsignalend = ENZonsetP+1.0
+    Zsignalend = ENZonsetP+windowlength
     
     Znoisewave  = stZno.trim( starttime+Znosiebeg, starttime+Znosieend )
     Zsignalwave = stZsi.trim( starttime+Zsignalbeg, starttime+Zsignalend ) 
     yZ = Zsignalwave[0].data / max(np.fabs(stZ2[0].data)) 
     
     # The range of the drawn waveform
-    stZ22 = stZ22.trim( starttime+Zsignalbeg-0.3, starttime+Zsignalbeg+0.5 ) 
+    stZ22 = stZ22.trim( starttime+Zsignalbeg-num1, starttime+Zsignalbeg+num2 ) 
     dataZ = stZ22[0].data / max(np.fabs(stZ22[0].data))  
     xZ = np.arange(0, len(dataZ), 1)
                                 
@@ -119,22 +140,27 @@ for idx,iFile in enumerate( nFiles ):
         aZ = [negPeakIdxZ[0], posPeakIdxZ[0]]
     
     # The position where the template matches
-    xSinZ = np.arange(0, len(temWaveZ), 1)+(0.3/delta+aZ[0]-(periodZ/4)/delta)
+    xSinZ = np.arange(0, len(temWaveZ), 1)+(num1/delta+aZ[0]-(periodZ/4)/delta)
     
+    # Draw waveform diagram
     ax0.plot(xZ*delta, dataZ+d, lw=1.5, c='black')     
     ax0.plot(xSinZ*delta, temWaveZ+d, lw=1.5, c='blue') 
     
-    ax0.vlines( 0.3+aZ[0]*delta, ymin=-1+d, ymax=1+d, linestyle='--', colors='blue', lw=1.2) 
-    ax0.vlines( 0.3+aZ[1]*delta, ymin=-1+d, ymax=1+d, linestyle='--', colors='blue', lw=1.2) 
-    ax0.vlines( 0.3, ymin=-0.7+d, ymax=0.7+d, linestyle='--', colors='red', lw=1.2) #phasenet 
+    ax0.vlines( num1+aZ[0]*delta, ymin=-1+d, ymax=1+d, linestyle='--', colors='blue', lw=1.2) 
+    ax0.vlines( num1+aZ[1]*delta, ymin=-1+d, ymax=1+d, linestyle='--', colors='blue', lw=1.2) 
+    ax0.vlines( num1, ymin=-0.7+d, ymax=0.7+d, linestyle='--', colors='red', lw=1.2) #phasenet 
     ax0.text(0, d+0.3, station, va="center", fontsize=24)
-    ax0.text(0.2, d+0.3, polZ, va="center", fontsize=24)
+    ax0.text(num1-0.1, d+0.3, polZ, va="center", fontsize=24)
     
-    d += 3 
+    d += dd 
         
 plt.xlabel("Time(s)", fontsize=26)
 plt.tick_params(axis='x', labelsize=26)  
+
+# Range of vertical axis in the first half
 plt.ylim(-1.5, 58.5)
+# Or the range of the vertical axis in the latter half 
+# plt.ylim(-1.5, 55.5)
 ax0.set_yticks([])
 
 ax0.spines['right'].set_color('none')
@@ -146,7 +172,12 @@ plt.tight_layout()
 corrfigurepath = './figure_polZ/'
 if not os.path.exists(corrfigurepath):
     os.makedirs(corrfigurepath )
+    
+# Save the first half of the waveform diagram
 plt.savefig(corrfigurepath+'AllStations1.png', dpi=300)
+# Or save the waveform diagram of the latter half
+# plt.savefig(corrfigurepath+'AllStations2.png', dpi=300)
+
 plt.show()
         
         
