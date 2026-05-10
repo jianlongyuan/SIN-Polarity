@@ -23,7 +23,7 @@ from obspy import read_inventory
 
 
 
-#%%----Relevant parameters that users can change according to their actual situation
+#%%---- Key parameters given by user
  
 # Directory for storing downloaded data files
 src_dir = './2014-10-10-mb4.5-Oklahoma/'
@@ -80,9 +80,9 @@ with open( outFile, mode='w', newline='' ) as fp:
     writer.writerow( [ 'fname', 'E', 'N', 'Z' ] )
 
 #-- Read data files
-dataPathE = dst_dir1
-dataPathN = dst_dir2
-dataPathZ = dst_dirZ
+dataPathE = dst_dir1 + '/'
+dataPathN = dst_dir2 + '/'
+dataPathZ = dst_dirZ + '/'
 nFilesE = fnmatch.filter( sorted(os.listdir(dataPathE)), '*.mseed') 
 nFilesN = fnmatch.filter( sorted(os.listdir(dataPathN)), '*.mseed') 
 nFilesZ = fnmatch.filter( sorted(os.listdir(dataPathZ)), '*.mseed') 

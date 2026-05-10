@@ -31,7 +31,7 @@ plt.rcParams["font.family"] = "Times New Roman"
     
 
 
-#%%----Relevant parameters that users can change according to their actual situation
+#%%---- Key parameters given by user
  
 # Cut the time window range of noise and signal segments
 windowlength = 1
