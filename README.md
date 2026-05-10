@@ -72,7 +72,7 @@ Run `SIN_Polarity_Step1_Fetch_data.py` to download three-component seismic wavef
 - `eventPath`: Directory for storing downloaded data
 - `origin_time`: Event origin time (UTC format)
 - `lat`, `lon`: Epicenter coordinates (latitude, longitude)
-- `minDisInDeg`, `maxDisInDeg`: Station distance range in degrees (e.g., 0-1 degree)
+- `minDisInDeg`, `maxDisInDeg`: Station distance range in degrees
 - `clientName`: Data service provider (default: "IRIS")
 
 **Output**:
@@ -85,12 +85,12 @@ Run `SIN_Polarity_Step1_Fetch_data.py` to download three-component seismic wavef
 Run `SIN_Polarity_Step2_First_arrival_picking.py` to automatically pick P-wave first-arrival times using PhaseNet or traditional STA/LTA algorithm.
 
 **Processing workflow**:
-1. Organize three-component data into separate folders (E, N, Z)
+1. Organize three-component data into separate folders (data1, data2, dataZ)
 2. Remove linear trend, mean, and bandpass filtering and calculate theoretical P-wave travel time (ak135 model)
 3. Extract time window around theoretical arrival
 4. Call PhaseNet or STA/LTA for automatic picking
 
-**Output**: `templates.csv` containing P-wave first-arrival times (seconds from trace start) for each station
+**Output**: `templates.csv` containing P-wave first-arrival times for each station
 
 ### Step 3: P-wave First-Motion Polarity Determination
 
