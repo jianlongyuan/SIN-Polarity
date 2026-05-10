@@ -237,7 +237,9 @@ for i in range(numPicks):
             iitp_prob = float(iitp_prob[ leftIndex_tp_prob + 1:rightIndex_tp_prob ])
             print('iitp =', iitp)
             print('itp_prob =', itp_prob)
-
+            
+            # Due to the fact that the initial arrival of picking is generally later, 
+            # the results are placed one sampling point in advance
             onsetP = (iitp-1)*delta           
             print('onsetP  =', onsetP)
             
