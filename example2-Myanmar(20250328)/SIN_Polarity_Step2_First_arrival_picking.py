@@ -161,6 +161,7 @@ for i in range(len(nFilesE)):
     # STA/LTA
     cftZ = classic_sta_lta(Zsac.data, nstaZ, nltaZ)
     imaxZ = np.argmax(cftZ)
+    # Due to the fact that the initial pick-up is generally later, the results are placed 5.5 seconds in advance
     onsetP = imaxZ / Zsac.stats.sampling_rate - 5.5
     
     # Write as sac file
